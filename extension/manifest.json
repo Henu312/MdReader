@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "本地 Markdown 阅读器",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "在 Brave 中离线打开、拖放和阅读本地 Markdown 文件。",
   "permissions": ["storage"],
   "host_permissions": ["file:///*", "http://127.0.0.1/*", "http://localhost/*"],

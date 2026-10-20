@@ -17,6 +17,7 @@ const tocPanel = document.querySelector('#toc-panel');
 const tocLinks = document.querySelector('#toc-links');
 let documentBaseUrl = '';
 let documentAssetBaseUrl = '';
+let documentDocToken = '';
 let documentSaveUrl = '';
 let currentDocument = { name: '未命名.md', text: '' };
 let editing = false;
@@ -52,7 +53,10 @@ function safeUrl(value) {
   const embeddedImage = /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\s]+$/i;
   if (/^(https?:|mailto:)/i.test(url) || embeddedImage.test(url)) return url;
   if (documentAssetBaseUrl && !/^[a-z][a-z0-9+.-]*:/i.test(url)) {
-    return `${documentAssetBaseUrl}?path=${encodeURIComponent(url)}`;
+    // 资源接口要求带 doc 令牌，否则服务端一律 404（相对路径图片就是这个坑）。
+    const connector = documentAssetBaseUrl.includes('?') ? '&' : '?';
+    const token = documentDocToken ? `doc=${encodeURIComponent(documentDocToken)}&` : '';
+    return `${documentAssetBaseUrl}${connector}${token}path=${encodeURIComponent(url)}`;
   }
   if (documentBaseUrl && !/^[a-z][a-z0-9+.-]*:/i.test(url)) {
     try { return new URL(url, documentBaseUrl).href; } catch { return ''; }
@@ -466,6 +470,7 @@ async function openFile(file) {
   if (!file) return;
   documentBaseUrl = '';
   documentAssetBaseUrl = '';
+  documentDocToken = '';
   documentSaveUrl = '';
   await showDocument({ name: file.name, text: await file.text(), updatedAt: Date.now() });
 }
@@ -486,6 +491,7 @@ async function openExternalSource(sourceUrl, assetBaseUrl) {
   if (!response.ok) throw new Error(`读取失败（HTTP ${response.status}）。`);
   documentBaseUrl = sourceUrl;
   documentAssetBaseUrl = assetBaseUrl || '';
+  documentDocToken = new URL(sourceUrl).searchParams.get('doc') || '';
   const saveUrl = new URL(sourceUrl);
   saveUrl.pathname = '/save';
   documentSaveUrl = saveUrl.href;
