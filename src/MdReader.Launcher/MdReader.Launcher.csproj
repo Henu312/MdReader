@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>MdReader</AssemblyName>
+    <RootNamespace>MdReader</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!--
+    发布方式：框架依赖 + 单文件。
+    只把自己的代码打进 exe（约 250 KB），.NET 运行时全部使用本机已安装的版本。
+    本机需要：.NET 6 Desktop Runtime 或更高（Microsoft.WindowsDesktop.App 6.x 及以上）。
+  -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <DebugType>none</DebugType>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+    <!-- 目标框架是 net6，但允许在更高主版本的运行时（8/9/10）上启动。 -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="viewer.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="browser.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="extension-id.txt" CopyToOutputDirectory="PreserveNewest" Condition="Exists('extension-id.txt')" />
+    <Content Include="extension-id.example.txt" CopyToOutputDirectory="PreserveNewest" Condition="!Exists('extension-id.txt')" Link="extension-id.txt" />
+  </ItemGroup>
+
+</Project>
+

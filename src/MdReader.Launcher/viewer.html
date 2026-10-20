@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  body{margin:0;color:#20252b;background:#f6f7f9;font:16px/1.7 "Segoe UI","Microsoft YaHei",sans-serif}
+  .bar{position:sticky;top:0;padding:12px 24px;background:#fff;border-bottom:1px solid #ddd;font-weight:700}
+  .main{max-width:980px;margin:auto;padding:28px 22px 80px}h1,h2{border-bottom:1px solid #ddd;padding-bottom:.3em}
+  a{color:#1769d1}pre{padding:14px;overflow:auto;background:#eef0f3;border-radius:5px}code{background:#eef0f3;padding:2px 4px;border-radius:3px}img{max-width:100%}
+  blockquote{border-left:4px solid #ccd2d8;padding-left:14px;color:#64707c}table{border-collapse:collapse}th,td{border:1px solid #ccd2d8;padding:5px 9px}th{background:#eef0f3}
+  .markdown pre,.main pre{overflow:auto}.main pre::-webkit-scrollbar{height:0}
+  .code-block{position:relative}
+  .code-scrollbar{position:sticky;bottom:0;z-index:3;height:12px;margin:2px 0 16px;overflow-x:auto;overflow-y:hidden;border-radius:6px;background:rgba(246,247,249,.9)}
+  .code-scrollbar[hidden]{display:none}
+  .code-scrollbar>div{height:1px}
+  .code-scrollbar::-webkit-scrollbar{height:9px}
+  .code-scrollbar::-webkit-scrollbar-thumb{background:#9aa4b0;border-radius:5px}
+  .code-scrollbar::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+<div class="bar">Markdown 预览：__TITLE__</div>
+<main id="main" class="main">读取中…</main>
+<script>
+  // 页面地址上带着 doc 令牌，正文和资源请求都必须原样带上，否则服务端一律 404。
+  const doc = new URLSearchParams(location.search).get('doc') || '';
+  const assetUrl = path => '/asset?doc=' + encodeURIComponent(doc) + '&path=' + encodeURIComponent(path);
+  const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const inline = s => {
+    let v = esc(s);
+    v = v.replace(/`([^`]+)`/g, '<code>$1</code>');
+    v = v.replace(/!\[([^\]]*)\]\(([^ )]+)\)/g,
+      (_, alt, url) => /^data:image\//i.test(url)
+        ? '<img src="' + url + '" alt="' + alt + '">'
+        : '<img src="' + assetUrl(url) + '" alt="' + alt + '">');
+    v = v.replace(/\[([^\]]+)\]\(([^ )]+)\)/g,
+      (_, text, url) => '<a href="' + (/^https?:/i.test(url) ? url : assetUrl(url)) + '">' + text + '</a>');
+    v = v.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    v = v.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    return v;
+  };
+
+  function render(md) {
+    const out = [];
+    let paragraph = [];
+    let inCode = false;
+    let code = [];
+    const flush = () => { if (paragraph.length) out.push('<p>' + inline(paragraph.join(' ')) + '</p>'); paragraph = []; };
+
+    for (const line of md.replace(/\r\n?/g, '\n').split('\n')) {
+      if (/^```/.test(line)) {
+        flush();
+        if (inCode) out.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>');
+        inCode = !inCode;
+        code = [];
+        continue;
+      }
+      if (inCode) { code.push(line); continue; }
+      if (!line.trim()) { flush(); continue; }
+
+      const heading = line.match(/^(#{1,6})\s+(.+)/);
+      if (heading) { flush(); const n = heading[1].length; out.push('<h' + n + '>' + inline(heading[2]) + '</h' + n + '>'); continue; }
+
+      const quote = line.match(/^>\s?(.*)/);
+      if (quote) { flush(); out.push('<blockquote>' + inline(quote[1]) + '</blockquote>'); continue; }
+
+      const item = line.match(/^\s*[-+*]\s+(.+)/);
+      if (item) { flush(); out.push('<li>' + inline(item[1]) + '</li>'); continue; }
+
+      paragraph.push(line.trim());
+    }
+
+    flush();
+    if (inCode) out.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>');
+    return out.join('\n');
+  }
+
+  fetch('/content?doc=' + encodeURIComponent(doc))
+    .then(response => { if (!response.ok) throw new Error('HTTP ' + response.status); return response.text(); })
+    .then(text => { const main = document.querySelector('#main'); main.innerHTML = render(text); if (window.enhanceCodeBlocks) window.enhanceCodeBlocks(main); })
+    .catch(error => { document.querySelector('#main').textContent = '读取失败：' + error.message; });
+</script>
+<script>
+  // 宽代码块的横向滚动条固定在视口底部，避免长代码块要滚到底才能横向拖动。
+  window.enhanceCodeBlocks = function (container) {
+    for (const pre of container.querySelectorAll('pre')) {
+      if (pre.parentElement && pre.parentElement.classList.contains('code-block')) continue;
+      const block = document.createElement('div');
+      block.className = 'code-block';
+      pre.replaceWith(block);
+      block.appendChild(pre);
+      const bar = document.createElement('div');
+      bar.className = 'code-scrollbar';
+      bar.setAttribute('aria-hidden', 'true');
+      bar.appendChild(document.createElement('div'));
+      block.appendChild(bar);
+      const sync = () => {
+        if (pre.scrollWidth - pre.clientWidth <= 1) { bar.hidden = true; return; }
+        bar.hidden = false;
+        bar.firstElementChild.style.width = pre.scrollWidth + 'px';
+        if (Math.abs(bar.scrollLeft - pre.scrollLeft) > 0.5) bar.scrollLeft = pre.scrollLeft;
+      };
+      pre.addEventListener('scroll', () => { if (Math.abs(bar.scrollLeft - pre.scrollLeft) > 0.5) bar.scrollLeft = pre.scrollLeft; });
+      bar.addEventListener('scroll', () => { if (Math.abs(pre.scrollLeft - bar.scrollLeft) > 0.5) pre.scrollLeft = bar.scrollLeft; });
+      pre.syncScrollBar = sync;
+      sync();
+    }
+  };
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('pre').forEach(pre => pre.syncScrollBar && pre.syncScrollBar());
+  });
+</script></body>
+</html>

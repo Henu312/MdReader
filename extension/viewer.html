@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+    <title>Markdown 阅读器</title>
+  </head>
+  <body>
+    <header class="toolbar">
+      <div class="brand">Markdown 阅读器</div>
+      <div id="file-name" class="file-name">未打开文件</div>
+      <span id="status" class="status" role="status" aria-live="polite"></span>
+      <label class="icon-button" title="打开 Markdown 文件" aria-label="打开 Markdown 文件" for="file-input">&#128194;</label>
+      <input id="file-input" type="file" accept=".md,.markdown,text/markdown,text/plain" hidden>
+      <button id="edit-toggle" class="icon-button" type="button" title="编辑 Markdown" aria-label="编辑 Markdown">&#9998;</button>
+      <button id="preview-toggle" class="icon-button" type="button" title="隐藏预览" aria-label="隐藏预览" hidden>&#128065;</button>
+      <button id="save-file" class="icon-button" type="button" title="保存 Markdown 副本" aria-label="保存 Markdown 副本" hidden>&#128190;</button>
+      <button id="theme-toggle" class="icon-button" type="button" title="切换深色模式" aria-label="切换深色模式">&#9681;</button>
+    </header>
+    <main id="drop-zone" class="reader">
+      <aside id="toc-panel" class="toc" hidden aria-label="文档目录">
+        <div class="toc-title">目录</div>
+        <nav id="toc-links"></nav>
+      </aside>
+      <section class="document-area">
+        <section id="empty-state" class="empty-state">
+          <h1>打开 Markdown 文件</h1>
+          <p>将文件拖到此处，或使用右上角的打开按钮。</p>
+        </section>
+        <section id="editor-layout" class="editor-layout" hidden>
+          <section class="editor-pane">
+            <textarea id="editor" class="editor" spellcheck="false" aria-label="Markdown 编辑器" aria-autocomplete="list" aria-controls="syntax-suggestions" aria-expanded="false"></textarea>
+            <div id="syntax-suggestions" class="syntax-suggestions" role="listbox" aria-label="Markdown 语法建议" hidden></div>
+          </section>
+          <section id="preview-pane" class="preview-pane">
+            <article id="editor-preview" class="markdown editor-preview"></article>
+          </section>
+        </section>
+        <article id="content" class="markdown" hidden></article>
+      </section>
+    </main>
+    <script src="viewer.js?v=2.10.0"></script>
+  </body>
+</html>

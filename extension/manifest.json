@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "本地 Markdown 阅读器",
+  "version": "1.4.0",
+  "description": "在 Brave 中离线打开、拖放和阅读本地 Markdown 文件。",
+  "permissions": ["storage"],
+  "host_permissions": ["file:///*", "http://127.0.0.1/*", "http://localhost/*"],
+  "action": {
+    "default_title": "打开 Markdown 文件",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

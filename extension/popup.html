@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+    <title>本地 Markdown 阅读器</title>
+  </head>
+  <body class="popup">
+    <main>
+      <h1>Markdown 阅读器</h1>
+      <p>选择一个本地 Markdown 文件，在新标签页中预览。</p>
+      <label class="button" for="file-input">选择 .md 文件</label>
+      <input id="file-input" type="file" accept=".md,.markdown,text/markdown,text/plain" hidden>
+      <p id="status" class="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

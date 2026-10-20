@@ -1,0 +1,15 @@
+# 构建产物：不提交
+bin/
+obj/
+dist/
+
+# 本机配置（含个人扩展 ID）
+extension-id.txt
+
+# 编辑器 / 系统
+.vs/
+.vscode/
+*.user
+*.suo
+Thumbs.db
+.DS_Store

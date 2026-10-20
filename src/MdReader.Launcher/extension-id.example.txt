@@ -1,0 +1,10 @@
+# 把当前浏览器里的扩展 ID 填在下面（32 位，字符范围 a-p）。
+#
+# 两个浏览器 ID 不同时可以分行写：
+#   brave=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#   chrome=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#
+# 也可以只写一行裸 ID，此时不再区分浏览器。
+# 没有有效 ID 时，启动器改用内置后备阅读页（无目录、无编辑）。
+#
+# 这个文件是模板；复制成 extension-id.txt 后填写，extension-id.txt 不会提交到仓库。
