@@ -54,6 +54,8 @@ dotnet publish .\src\MdReader.Launcher\MdReader.Launcher.csproj -c Release -o .\
 
 发布属性（`SelfContained=false`、`PublishSingleFile=true`、`RollForward=LatestMajor`）都写在 csproj 里，不需要每次在命令行上敲。
 
+发布前脚本会先结束正在运行的 `MdReader.exe` —— Windows 会锁住正在运行的单文件 exe，不关掉就无法覆盖，报错形式是 The process cannot access the file。不想被打断时加 `-KeepRunning`，它会改成直接报错提醒。
+
 > 换到别的机器后如果双击提示缺少 .NET，见下面「无法运行？缺的是这个依赖」。
 
 ## 配置（改完不用重启）
@@ -155,6 +157,7 @@ dotnet --list-runtimes | Select-String 'WindowsDesktop'
 ```powershell
 Start-Process .\dist\MdReader.exe -ArgumentList '--selftest' -Wait -NoNewWindow
 ```
+
 
 
 
