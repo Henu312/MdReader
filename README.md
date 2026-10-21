@@ -65,6 +65,8 @@ dotnet publish .\src\MdReader.Launcher\MdReader.Launcher.csproj -c Release -o .\
 - `brave` / `chrome`：指定浏览器
 - `auto` 或其他值：先找 Brave，再找 Chrome
 
+写 `auto` 时如果 `extension-id.txt` 里只有一条 `brave=` 或 `chrome=`，会直接采用它；两边都配了（ID 又不同）时才需要明确写 `brave` 或 `chrome`。
+
 `dist\extension-id.txt`：
 
 - `brave=<ID>`、`chrome=<ID>` 分行写
@@ -157,6 +159,7 @@ dotnet --list-runtimes | Select-String 'WindowsDesktop'
 ```powershell
 Start-Process .\dist\MdReader.exe -ArgumentList '--selftest' -Wait -NoNewWindow
 ```
+
 
 
 

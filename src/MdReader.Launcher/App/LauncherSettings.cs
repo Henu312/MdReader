@@ -70,7 +70,14 @@ internal static class ConfigParser
             return automatic;
         }
 
-        return bare;
+        if (bare is not null)
+        {
+            return bare;
+        }
+
+        // browser.txt 写 auto 时这里拿到的 browser 是 null；
+        // 只配置了一个浏览器的 ID 就直接用它，否则退回后备页。
+        return byBrowser.Count == 1 ? byBrowser.Values.First() : null;
     }
 
     /// <summary>Chromium 扩展 ID：32 位，字符范围为 a-p。</summary>

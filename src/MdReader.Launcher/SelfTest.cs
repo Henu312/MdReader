@@ -75,7 +75,8 @@ internal static class SelfTest
             Check("扩展 ID 校验",
                 ConfigParser.IsExtensionId(new string('a', 32)) &&
                 !ConfigParser.IsExtensionId(new string('q', 32)));
-            Check("扩展 ID 按浏览器选择",
+            Check("auto 时单条浏览器 ID 可用",
+                ConfigParser.ParseExtensionId(new[] { $"brave={new string('e', 32)}" }, null) == new string('e', 32));            Check("扩展 ID 按浏览器选择",
                 ConfigParser.ParseExtensionId(new[] { $"chrome={new string('b', 32)}" }, "chrome") == new string('b', 32));
             Check("扩展 ID 回落到 auto",
                 ConfigParser.ParseExtensionId(new[] { $"auto={new string('c', 32)}" }, "brave") == new string('c', 32));
